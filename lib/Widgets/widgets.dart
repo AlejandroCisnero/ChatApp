@@ -28,20 +28,26 @@ class Paragraph extends StatelessWidget {
 }
 
 class IconAndDetail extends StatelessWidget {
-  const IconAndDetail(this.icon, this.detail);
+  // ignore: prefer_const_constructors_in_immutables
+  IconAndDetail(this.icon, this.detail, this.colorIcon, {Key? key})
+      : super(key: key);
   final IconData icon;
   final String detail;
+  final Color colorIcon;
 
   @override
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
           children: [
-            Icon(icon),
+            Icon(
+              icon,
+              color: colorIcon,
+            ),
             const SizedBox(width: 8),
             Text(
               detail,
-              style: const TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 18, color: colorIcon),
             )
           ],
         ),
