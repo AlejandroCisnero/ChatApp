@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../Widgets/widgets.dart';
 
 enum ApplicationLoginState {
@@ -55,6 +56,17 @@ class Authentication extends StatelessWidget {
                   startLoginFlow();
                 },
                 child: const Text('RSVP'),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 24, bottom: 8),
+              child: StyledButton(
+                onPressed: () {
+                  Get.isDarkMode
+                      ? Get.changeTheme(ThemeData.light())
+                      : Get.changeTheme(ThemeData.dark());
+                },
+                child: const Text('Theme mode'),
               ),
             ),
           ],
