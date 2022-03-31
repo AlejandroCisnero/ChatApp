@@ -54,7 +54,9 @@ class Authentication extends StatelessWidget {
                 onPressed: () {
                   startLoginFlow();
                 },
-                child: const Text('RSVP'),
+                child: Text('RSVP',
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary)),
               ),
             ),
           ],
