@@ -12,10 +12,14 @@ class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
       body: ListView(
         children: <Widget>[
-          Image.asset('assets/codelab.png'),
+          ClipRRect(
+            child: Image.asset('assets/nightLoginBackGround.png'),
+            borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(180.0),
+                bottomRight: Radius.circular(180.0)),
+          ),
           const SizedBox(height: 8),
           IconAndDetail(Icons.calendar_today, 'October 30',
               Theme.of(context).colorScheme.onPrimary),

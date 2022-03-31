@@ -1,4 +1,6 @@
+import 'package:chat_app/Libraries/lib_color_schemes.g.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../Widgets/widgets.dart';
 
 enum ApplicationLoginState {
@@ -54,9 +56,20 @@ class Authentication extends StatelessWidget {
                 onPressed: () {
                   startLoginFlow();
                 },
-                child: Text('RSVP',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimary)),
+                child: 'RSVP',
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 24, bottom: 8),
+              child: StyledButton(
+                onPressed: () {
+                  Get.isDarkMode
+                      ? Get.changeTheme(
+                          ThemeData(colorScheme: lightColorScheme))
+                      : Get.changeTheme(
+                          ThemeData(colorScheme: darkColorScheme));
+                },
+                child: 'Theme mode',
               ),
             ),
           ],
@@ -101,7 +114,7 @@ class Authentication extends StatelessWidget {
                 onPressed: () {
                   signOut();
                 },
-                child: const Text('LOGOUT'),
+                child: 'LOGOUT',
               ),
             ),
           ],
@@ -139,10 +152,7 @@ class Authentication extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text(
-                'OK',
-                style: TextStyle(color: Colors.deepPurple),
-              ),
+              child: 'OK',
             ),
           ],
         );
@@ -201,7 +211,7 @@ class _EmailFormState extends State<EmailForm> {
                             widget.callback(_controller.text);
                           }
                         },
-                        child: const Text('NEXT'),
+                        child: 'NEXT',
                       ),
                     ),
                   ],
@@ -319,7 +329,7 @@ class _RegisterFormState extends State<RegisterForm> {
                             );
                           }
                         },
-                        child: const Text('SAVE'),
+                        child: 'SAVE',
                       ),
                       const SizedBox(width: 30),
                     ],
@@ -414,7 +424,7 @@ class _PasswordFormState extends State<PasswordForm> {
                             );
                           }
                         },
-                        child: const Text('SIGN IN'),
+                        child: 'SIGN IN',
                       ),
                       const SizedBox(width: 30),
                     ],

@@ -39,31 +39,21 @@ class IconAndDetail extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
-          children: [
-            Icon(
-              icon,
-              color: colorIcon,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              detail,
-              style: TextStyle(fontSize: 18, color: colorIcon),
-            )
-          ],
+          children: [Icon(icon), const SizedBox(width: 8), Text(detail)],
         ),
       );
 }
 
 class StyledButton extends StatelessWidget {
   const StyledButton({required this.child, required this.onPressed});
-  final Widget child;
+  final String child;
   final void Function() onPressed;
 
   @override
   Widget build(BuildContext context) => OutlinedButton(
-        style: OutlinedButton.styleFrom(
-            side: BorderSide(color: Theme.of(context).colorScheme.onPrimary)),
+        // style: OutlinedButton.styleFrom(
+        //     side: BorderSide(color: Theme.of(context).colorScheme.primary)),
         onPressed: onPressed,
-        child: child,
+        child: Text(child),
       );
 }

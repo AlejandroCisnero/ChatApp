@@ -1,6 +1,7 @@
 import 'package:chat_app/Libraries/lib_color_schemes.g.dart' as cl;
 import 'package:chat_app/Screens/auth_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -25,13 +26,11 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final overallColor = Theme.of(context).colorScheme.onPrimary;
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: cl.darkColorScheme,
-        textTheme: TextTheme(bodyText2: TextStyle(color: overallColor)),
-      ),
+      darkTheme: ThemeData(colorScheme: cl.darkColorScheme),
+      theme: ThemeData(colorScheme: cl.lightColorScheme),
+      themeMode: ThemeMode.system,
       home: const AuthScreen(),
     );
   }
