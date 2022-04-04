@@ -63,11 +63,11 @@ class Authentication extends StatelessWidget {
               padding: const EdgeInsets.only(left: 24, bottom: 8),
               child: StyledButton(
                 onPressed: () {
-                  Get.isDarkMode
-                      ? Get.changeTheme(
-                          ThemeData(colorScheme: lightColorScheme))
-                      : Get.changeTheme(
-                          ThemeData(colorScheme: darkColorScheme));
+                  if (Get.isDarkMode) {
+                    Get.changeTheme(ThemeData(colorScheme: lightColorScheme));
+                  } else {
+                    Get.changeTheme(ThemeData(colorScheme: darkColorScheme));
+                  }
                 },
                 child: 'Theme mode',
               ),
