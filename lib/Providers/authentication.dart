@@ -1,6 +1,4 @@
-import 'package:chat_app/Libraries/lib_color_schemes.g.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import '../Widgets/widgets.dart';
 
 enum ApplicationLoginState {
@@ -48,32 +46,9 @@ class Authentication extends StatelessWidget {
   Widget build(BuildContext context) {
     switch (loginState) {
       case ApplicationLoginState.loggedOut:
-        return Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 24, bottom: 8),
-              child: StyledButton(
-                onPressed: () {
-                  startLoginFlow();
-                },
-                child: 'RSVP',
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 24, bottom: 8),
-              child: StyledButton(
-                onPressed: () {
-                  if (Get.isDarkMode) {
-                    Get.changeTheme(ThemeData(colorScheme: lightColorScheme));
-                  } else {
-                    Get.changeTheme(ThemeData(colorScheme: darkColorScheme));
-                  }
-                },
-                child: 'Theme mode',
-              ),
-            ),
-          ],
-        );
+        return EmailForm(
+            callback: (email) => verifyEmail(
+                email, (e) => _showErrorDialog(context, 'Invalid email', e)));
       case ApplicationLoginState.emailAddress:
         return EmailForm(
             callback: (email) => verifyEmail(
@@ -189,8 +164,9 @@ class _EmailFormState extends State<EmailForm> {
                   child: TextFormField(
                     controller: _controller,
                     decoration: const InputDecoration(
-                      hintText: 'Enter your email',
-                    ),
+                        border: OutlineInputBorder(),
+                        hintText: 'Enter your email',
+                        label: Text("Email")),
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'Enter your email address to continue';
