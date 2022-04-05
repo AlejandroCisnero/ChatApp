@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:chat_app/Providers/darkThemeProvider.dart';
 import 'package:chat_app/Providers/sharedPreferencesHelper.dart';
 import 'package:chat_app/Widgets/loginImageClipper.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,8 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var darkThemeProvider =
+        Provider.of<DarkThemeProvider>(context, listen: false);
     log("$isDark");
     return Scaffold(
       body: SingleChildScrollView(
@@ -41,7 +44,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 child: AnimatedCrossFade(
                   firstChild: Image.asset('assets/nightLoginBackGround.png'),
                   secondChild: Image.asset('assets/dayLoginBackGround.jpg'),
-                  crossFadeState: isDark
+                  crossFadeState: !darkThemeProvider.darkTheme
                       ? CrossFadeState.showSecond
                       : CrossFadeState.showFirst,
                   duration: const Duration(milliseconds: 1000),
@@ -68,15 +71,14 @@ class _AuthScreenState extends State<AuthScreen> {
               IconButton(
                 icon: const Icon(Icons.light_mode),
                 onPressed: () async {
-                  setState(() {
-                    if (Get.isDarkMode) {
-                      Get.changeThemeMode(ThemeMode.light);
-                      SharedPreferencesHelper.setUserThemeMode(false);
-                    } else {
-                      Get.changeThemeMode(ThemeMode.dark);
-                      SharedPreferencesHelper.setUserThemeMode(true);
-                    }
-                  });
+                  await darkThemeProvider.darkThemePreference.getThemeMode() !=
+                          true
+                      ? setState(() {
+                          darkThemeProvider.darkTheme = true;
+                        })
+                      : setState(() {
+                          darkThemeProvider.darkTheme = false;
+                        });
                 },
               ),
             ],
