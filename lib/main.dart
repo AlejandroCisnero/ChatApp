@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:chat_app/Libraries/lib_color_schemes.g.dart' as cl;
+import 'package:chat_app/Providers/darkThemeProvider.dart';
 import 'package:chat_app/Providers/sharedPreferencesHelper.dart';
 import 'package:chat_app/Screens/auth_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -12,7 +13,12 @@ import './Providers/applicationState.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp();
+  } else {
+    Firebase.app();
+  }
+
   runApp(
     ChangeNotifierProvider(
       create: (context) => ApplicationState(),
@@ -21,49 +27,47 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  Future<bool> getUserThemeMode() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
 
-    return prefs.getBool("isDarkMode") ?? false;
+class _MyAppState extends State<MyApp> {
+  DarkThemeProvider themeChangeProvider = DarkThemeProvider();
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrentAppTheme();
+  }
+
+  void getCurrentAppTheme() async {
+    themeChangeProvider.darkTheme =
+        await themeChangeProvider.darkThemePreference.getThemeMode();
   }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     log("main builder");
-    return FutureBuilder<bool>(
-        future: SharedPreferencesHelper.getUserThemeMode(),
-        builder: (ctx, snap) {
-          if (snap.hasData) {
-            if (snap.data == true) {
-              return GetMaterialApp(
-                title: 'Flutter Demo',
-                darkTheme: ThemeData(colorScheme: cl.darkColorScheme),
-                theme: ThemeData(colorScheme: cl.lightColorScheme),
-                themeMode: ThemeMode.dark,
-                home: const AuthScreen(),
-              );
-            } else {
-              return GetMaterialApp(
-                title: 'Flutter Demo',
-                darkTheme: ThemeData(colorScheme: cl.darkColorScheme),
-                theme: ThemeData(colorScheme: cl.lightColorScheme),
-                themeMode: ThemeMode.light,
-                home: const AuthScreen(),
-              );
-            }
-          } else {
-            return GetMaterialApp(
-              title: 'Flutter Demo',
-              darkTheme: ThemeData(colorScheme: cl.darkColorScheme),
-              theme: ThemeData(colorScheme: cl.lightColorScheme),
-              themeMode: ThemeMode.system,
-              home: const AuthScreen(),
-            );
-          }
-        });
+    return ChangeNotifierProvider(
+      create: (_) {
+        return themeChangeProvider;
+      },
+      child: Consumer<DarkThemeProvider>(
+        builder: (context, value, child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Flutter Demo',
+            theme: ThemeData(
+                colorScheme:
+                    value.darkTheme ? cl.darkColorScheme : cl.lightColorScheme),
+            home: const AuthScreen(),
+          );
+        },
+      ),
+    );
   }
 }
