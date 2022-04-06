@@ -2,18 +2,17 @@ import 'dart:developer';
 
 import 'package:chat_app/Libraries/lib_color_schemes.g.dart' as cl;
 import 'package:chat_app/Providers/darkThemeProvider.dart';
-import 'package:chat_app/Providers/sharedPreferencesHelper.dart';
 import 'package:chat_app/Screens/auth_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import './Providers/applicationState.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp();
+  }
   runApp(
     ChangeNotifierProvider(
       create: (context) => ApplicationState(),
