@@ -117,6 +117,13 @@ class Authentication extends StatelessWidget {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
+                const Icon(
+                  Icons.mood_bad_rounded,
+                  size: 50,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
                 Text(
                   '${(e as dynamic).message}',
                   style: const TextStyle(fontSize: 18),

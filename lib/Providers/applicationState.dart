@@ -14,8 +14,6 @@ class ApplicationState extends ChangeNotifier {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
-    } else {
-      Firebase.app();
     }
 
     FirebaseAuth.instance.userChanges().listen((user) {
