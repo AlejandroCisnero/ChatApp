@@ -18,19 +18,9 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  bool isDark = false;
-  @override
-  void didChangeDependencies() async {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
-    var brightness = MediaQuery.of(context).platformBrightness;
-    isDark = brightness == Brightness.dark;
-  }
-
   @override
   Widget build(BuildContext context) {
     var darkThemeProvider = Provider.of<DarkThemeProvider>(context);
-    log("$isDark");
     return Scaffold(
       body: SingleChildScrollView(
         child: SizedBox(
