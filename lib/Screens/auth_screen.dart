@@ -29,8 +29,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var darkThemeProvider =
-        Provider.of<DarkThemeProvider>(context, listen: false);
+    var darkThemeProvider = Provider.of<DarkThemeProvider>(context);
     log("$isDark");
     return Scaffold(
       body: SingleChildScrollView(
@@ -64,6 +63,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     cancelRegistration: appState.cancelRegistration,
                     registerAccount: appState.registerAccount,
                     signOut: appState.signOut,
+                    user: appState.user,
                   ),
                 ),
               ),
