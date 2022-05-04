@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:chat_app/Screens/chat_screen.dart';
 import 'package:flutter/material.dart';
 import '../Widgets/widgets.dart';
 
@@ -83,19 +84,21 @@ class Authentication extends StatelessWidget {
           },
         );
       case ApplicationLoginState.loggedIn:
-        return Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 24, bottom: 8),
-              child: StyledButton(
-                onPressed: () {
-                  signOut();
-                },
-                child: 'LOGOUT',
-              ),
-            ),
-          ],
-        );
+        // return Row(
+        //   children: [
+        //     Padding(
+        //       padding: const EdgeInsets.only(left: 24, bottom: 8),
+        //       child: StyledButton(
+        //         onPressed: () {
+        //           signOut();
+        //         },
+        //         child: 'LOGOUT',
+        //       ),
+        //     ),
+        //   ],
+        // );
+        Navigator.of(context).pushReplacementNamed(ChatScreen.route);
+        return const ChatScreen();
       default:
         return Row(
           children: const [

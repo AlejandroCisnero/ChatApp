@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:chat_app/Libraries/lib_color_schemes.g.dart' as cl;
 import 'package:chat_app/Providers/darkThemeProvider.dart';
 import 'package:chat_app/Screens/auth_screen.dart';
+import 'package:chat_app/Screens/chat_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -59,6 +60,9 @@ class _MyAppState extends State<MyApp> {
                 colorScheme:
                     value.darkTheme ? cl.darkColorScheme : cl.lightColorScheme),
             home: const AuthScreen(),
+            routes: {
+              ChatScreen.route: (context) => const ChatScreen(),
+            },
           );
         },
       ),

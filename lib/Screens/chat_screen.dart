@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({Key? key}) : super(key: key);
+  static const route = '/';
 
   @override
   Widget build(BuildContext context) {
