@@ -1,10 +1,6 @@
-import 'dart:developer';
-
 import 'package:chat_app/Providers/darkThemeProvider.dart';
-import 'package:chat_app/Providers/sharedPreferencesHelper.dart';
 import 'package:chat_app/Widgets/loginImageClipper.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../Providers/authentication.dart';
@@ -54,6 +50,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     cancelRegistration: appState.cancelRegistration,
                     registerAccount: appState.registerAccount,
                     signOut: appState.signOut,
+                    user: appState.user,
                   ),
                 ),
               ),

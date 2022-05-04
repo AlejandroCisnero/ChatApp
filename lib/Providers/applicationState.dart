@@ -1,9 +1,12 @@
-import 'package:chat_app/Screens/chat_screen.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../firebase_options.dart';
 import './authentication.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ApplicationState extends ChangeNotifier {
   ApplicationState() {
@@ -20,8 +23,10 @@ class ApplicationState extends ChangeNotifier {
     FirebaseAuth.instance.userChanges().listen((user) {
       if (user != null) {
         _loginState = ApplicationLoginState.loggedIn;
+        _userCredential = user;
       } else {
         _loginState = ApplicationLoginState.loggedOut;
+        _userCredential = null;
       }
       notifyListeners();
     });
@@ -32,6 +37,9 @@ class ApplicationState extends ChangeNotifier {
 
   String? _email;
   String? get email => _email;
+
+  User? _userCredential;
+  User? get user => _userCredential;
 
   void startLoginFlow() {
     _loginState = ApplicationLoginState.emailAddress;
@@ -63,10 +71,13 @@ class ApplicationState extends ChangeNotifier {
     void Function(FirebaseAuthException e) errorCallback,
   ) async {
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      final userAuthData =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+      // final prefs = await SharedPreferences.getInstance();
+      // prefs.setString('userData', json.encode(userAuthData));
     } on FirebaseAuthException catch (e) {
       errorCallback(e);
     }
@@ -81,10 +92,15 @@ class ApplicationState extends ChangeNotifier {
       String email,
       String displayName,
       String password,
+      String username,
       void Function(FirebaseAuthException e) errorCallback) async {
     try {
       var credential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(credential.user!.uid)
+          .set({'username': username, 'email': email});
       await credential.user!.updateDisplayName(displayName);
     } on FirebaseAuthException catch (e) {
       errorCallback(e);
@@ -94,4 +110,8 @@ class ApplicationState extends ChangeNotifier {
   void signOut() {
     FirebaseAuth.instance.signOut();
   }
+
+  // Future<bool> tryAutoLog() async{
+
+  // }
 }

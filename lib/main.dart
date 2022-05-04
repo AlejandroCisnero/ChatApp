@@ -4,6 +4,7 @@ import 'package:chat_app/Libraries/lib_color_schemes.g.dart' as cl;
 import 'package:chat_app/Providers/darkThemeProvider.dart';
 import 'package:chat_app/Screens/auth_screen.dart';
 import 'package:chat_app/Screens/chat_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -54,16 +55,31 @@ class _MyAppState extends State<MyApp> {
       child: Consumer<DarkThemeProvider>(
         builder: (context, value, child) {
           return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'Flutter Demo',
-            theme: ThemeData(
-                colorScheme:
-                    value.darkTheme ? cl.darkColorScheme : cl.lightColorScheme),
-            home: const AuthScreen(),
-            routes: {
-              ChatScreen.route: (context) => const ChatScreen(),
-            },
-          );
+              debugShowCheckedModeBanner: false,
+              title: 'Flutter Demo',
+              theme: ThemeData(
+                  colorScheme: value.darkTheme
+                      ? cl.darkColorScheme
+                      : cl.lightColorScheme),
+              themeMode: ThemeMode.dark,
+              home: StreamBuilder(
+                stream: FirebaseAuth.instance.authStateChanges(),
+                builder: (ctx, snapshot) {
+                  if (snapshot.hasData) {
+                    return const ChatScreen();
+                  } else {
+                    return const AuthScreen();
+                  }
+                },
+              )
+              // home: Consumer<ApplicationState>(
+              //   builder: (context, authData, _) {
+              //     return authData.user == null
+              //         ? const AuthScreen()
+              //         : const ChatScreen();
+              //   },
+              // ),
+              );
         },
       ),
     );

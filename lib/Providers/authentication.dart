@@ -1,8 +1,7 @@
-import 'dart:developer';
-
-import 'package:chat_app/Screens/chat_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../Widgets/widgets.dart';
+import '../Widgets/auth/emailForm.dart';
 
 enum ApplicationLoginState {
   loggedOut,
@@ -13,16 +12,16 @@ enum ApplicationLoginState {
 }
 
 class Authentication extends StatelessWidget {
-  const Authentication({
-    required this.loginState,
-    required this.email,
-    required this.startLoginFlow,
-    required this.verifyEmail,
-    required this.signInWithEmailAndPassword,
-    required this.cancelRegistration,
-    required this.registerAccount,
-    required this.signOut,
-  });
+  const Authentication(
+      {required this.loginState,
+      required this.email,
+      required this.startLoginFlow,
+      required this.verifyEmail,
+      required this.signInWithEmailAndPassword,
+      required this.cancelRegistration,
+      required this.registerAccount,
+      required this.signOut,
+      required this.user});
 
   final ApplicationLoginState loginState;
   final String? email;
@@ -37,23 +36,27 @@ class Authentication extends StatelessWidget {
     void Function(Exception e) error,
   ) signInWithEmailAndPassword;
   final void Function() cancelRegistration;
-  final void Function(
+  final Future<void> Function(
     String email,
     String displayName,
     String password,
+    String username,
     void Function(Exception e) error,
   ) registerAccount;
   final void Function() signOut;
+  final User? user;
 
   @override
   Widget build(BuildContext context) {
     switch (loginState) {
       case ApplicationLoginState.loggedOut:
         return EmailForm(
+            loginState: ApplicationLoginState.loggedOut,
             callback: (email) => verifyEmail(
                 email, (e) => _showErrorDialog(context, 'Invalid email', e)));
       case ApplicationLoginState.emailAddress:
         return EmailForm(
+            loginState: ApplicationLoginState.emailAddress,
             callback: (email) => verifyEmail(
                 email, (e) => _showErrorDialog(context, 'Invalid email', e)));
       case ApplicationLoginState.password:
@@ -70,35 +73,30 @@ class Authentication extends StatelessWidget {
           cancel: () {
             cancelRegistration();
           },
-          registerAccount: (
-            email,
-            displayName,
-            password,
-          ) {
-            registerAccount(
+          registerAccount: (email, displayName, password, username) async {
+            await registerAccount(
                 email,
                 displayName,
                 password,
+                username,
                 (e) =>
                     _showErrorDialog(context, 'Failed to create account', e));
           },
         );
-      case ApplicationLoginState.loggedIn:
-        // return Row(
-        //   children: [
-        //     Padding(
-        //       padding: const EdgeInsets.only(left: 24, bottom: 8),
-        //       child: StyledButton(
-        //         onPressed: () {
-        //           signOut();
-        //         },
-        //         child: 'LOGOUT',
-        //       ),
-        //     ),
-        //   ],
-        // );
-        Navigator.of(context).pushReplacementNamed(ChatScreen.route);
-        return const ChatScreen();
+      // case ApplicationLoginState.loggedIn:
+      //   return Row(
+      //     children: [
+      //       Padding(
+      //         padding: const EdgeInsets.only(left: 24, bottom: 8),
+      //         child: StyledButton(
+      //           onPressed: () {
+      //             signOut();
+      //           },
+      //           child: 'LOGOUT',
+      //         ),
+      //       ),
+      //     ],
+      //   );
       default:
         return Row(
           children: const [
@@ -148,79 +146,16 @@ class Authentication extends StatelessWidget {
   }
 }
 
-class EmailForm extends StatefulWidget {
-  const EmailForm({required this.callback});
-  final void Function(String email) callback;
-  @override
-  _EmailFormState createState() => _EmailFormState();
-}
-
-class _EmailFormState extends State<EmailForm> {
-  final _formKey = GlobalKey<FormState>(debugLabel: '_EmailFormState');
-  final _controller = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Header('Sign in with email'),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: TextFormField(
-                    controller: _controller,
-                    decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: 'Enter your email',
-                        label: Text("Email")),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Enter your email address to continue';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 16.0, horizontal: 30),
-                      child: StyledButton(
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            widget.callback(_controller.text);
-                          }
-                        },
-                        child: 'NEXT',
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class RegisterForm extends StatefulWidget {
-  const RegisterForm({
+  RegisterForm({
+    Key? key,
     required this.registerAccount,
     required this.cancel,
     required this.email,
-  });
+  }) : super(key: key);
   final String email;
-  final void Function(String email, String displayName, String password)
+  final Future<void> Function(
+          String email, String displayName, String password, String username)
       registerAccount;
   final void Function() cancel;
   @override
@@ -232,6 +167,19 @@ class _RegisterFormState extends State<RegisterForm> {
   final _emailController = TextEditingController();
   final _displayNameController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _usernameController = TextEditingController();
+  var _isLoading = false;
+
+  Future<void> registerAccount(
+      String email, String display, String password, String username) async {
+    setState(() {
+      _isLoading = true;
+    });
+    await widget.registerAccount(email, display, password, username);
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   @override
   void initState() {
@@ -248,83 +196,100 @@ class _RegisterFormState extends State<RegisterForm> {
           padding: const EdgeInsets.all(8.0),
           child: Form(
             key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: TextFormField(
-                    controller: _emailController,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter your email',
-                    ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Enter your email address to continue';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: TextFormField(
-                    controller: _displayNameController,
-                    decoration: const InputDecoration(
-                      hintText: 'First & last name',
-                    ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Enter your account name';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: TextFormField(
-                    controller: _passwordController,
-                    decoration: const InputDecoration(
-                      hintText: 'Password',
-                    ),
-                    obscureText: true,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Enter your password';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: widget.cancel,
-                        child: const Text('CANCEL'),
+            child: _isLoading
+                ? const CircularProgressIndicator()
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: TextFormField(
+                          controller: _emailController,
+                          decoration: const InputDecoration(
+                            hintText: 'Enter your email',
+                          ),
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Enter your email address to continue';
+                            }
+                            return null;
+                          },
+                        ),
                       ),
-                      const SizedBox(width: 16),
-                      StyledButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            widget.registerAccount(
-                              _emailController.text,
-                              _displayNameController.text,
-                              _passwordController.text,
-                            );
-                          }
-                        },
-                        child: 'SAVE',
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: TextFormField(
+                          controller: _usernameController,
+                          decoration: const InputDecoration(
+                            hintText: 'Enter your username',
+                          ),
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Enter your usernameto continue';
+                            }
+                            return null;
+                          },
+                        ),
                       ),
-                      const SizedBox(width: 30),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: TextFormField(
+                          controller: _displayNameController,
+                          decoration: const InputDecoration(
+                            hintText: 'First & last name',
+                          ),
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Enter your account name';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: TextFormField(
+                          controller: _passwordController,
+                          decoration: const InputDecoration(
+                            hintText: 'Password',
+                          ),
+                          obscureText: true,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Enter your password';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: widget.cancel,
+                              child: const Text('CANCEL'),
+                            ),
+                            const SizedBox(width: 16),
+                            StyledButton(
+                              onPressed: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  await registerAccount(
+                                      _emailController.text,
+                                      _displayNameController.text,
+                                      _passwordController.text,
+                                      _usernameController.text);
+                                }
+                              },
+                              child: 'SAVE',
+                            ),
+                            const SizedBox(width: 30),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              ],
-            ),
           ),
         ),
       ],
