@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:chat_app/Libraries/lib_color_schemes.g.dart' as cl;
-import 'package:chat_app/Providers/authentication.dart';
 import 'package:chat_app/Providers/darkThemeProvider.dart';
 import 'package:chat_app/Screens/auth_screen.dart';
 import 'package:chat_app/Screens/chat_screen.dart';

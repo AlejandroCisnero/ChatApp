@@ -83,20 +83,20 @@ class Authentication extends StatelessWidget {
                     _showErrorDialog(context, 'Failed to create account', e));
           },
         );
-      case ApplicationLoginState.loggedIn:
-        return Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 24, bottom: 8),
-              child: StyledButton(
-                onPressed: () {
-                  signOut();
-                },
-                child: 'LOGOUT',
-              ),
-            ),
-          ],
-        );
+      // case ApplicationLoginState.loggedIn:
+      //   return Row(
+      //     children: [
+      //       Padding(
+      //         padding: const EdgeInsets.only(left: 24, bottom: 8),
+      //         child: StyledButton(
+      //           onPressed: () {
+      //             signOut();
+      //           },
+      //           child: 'LOGOUT',
+      //         ),
+      //       ),
+      //     ],
+      //   );
       default:
         return Row(
           children: const [
