@@ -36,7 +36,7 @@ class ChatScreen extends StatelessWidget {
             },
             icon: Icon(
               Icons.more_vert,
-              color: Theme.of(context).colorScheme.onPrimary,
+              color: Theme.of(context).colorScheme.onBackground,
             ),
           )
         ],
