@@ -100,7 +100,11 @@ class ApplicationState extends ChangeNotifier {
       await FirebaseFirestore.instance
           .collection('users')
           .doc(credential.user!.uid)
-          .set({'username': username, 'email': email});
+          .set({
+        'username': username,
+        'email': email,
+        'userId': FirebaseAuth.instance.currentUser!.uid
+      });
       await credential.user!.updateDisplayName(displayName);
     } on FirebaseAuthException catch (e) {
       errorCallback(e);

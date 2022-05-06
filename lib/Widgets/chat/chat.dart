@@ -29,6 +29,7 @@ class Chat extends StatelessWidget {
                       chatDocs[index]['text'],
                       chatDocs[index]['userId'] ==
                           FirebaseAuth.instance.currentUser!.uid,
+                      chatDocs[index]['userId'],
                       key: ValueKey(chatDocs[index].id),
                     );
                   });
