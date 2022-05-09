@@ -16,7 +16,7 @@ class MessageBubble extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
               color: isMe
-                  ? Theme.of(context).colorScheme.onPrimary
+                  ? Theme.of(context).colorScheme.onSecondaryContainer
                   : Theme.of(context).colorScheme.secondary,
               borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(12),
@@ -31,6 +31,7 @@ class MessageBubble extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
           margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 message,
@@ -45,11 +46,17 @@ class MessageBubble extends StatelessWidget {
                     .get(),
                 builder: (context, AsyncSnapshot snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Center(child: Text(""));
                   }
-                  return Text(
-                    snapshot.data['username'],
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  return Row(
+                    mainAxisAlignment:
+                        isMe ? MainAxisAlignment.start : MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        snapshot.data['username'],
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
                   );
                 },
               ),

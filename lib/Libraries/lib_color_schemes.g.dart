@@ -4,14 +4,14 @@ const seed = Color(0xFF6750A4);
 
 const lightColorScheme = ColorScheme(
   brightness: Brightness.light,
-  primary: Color(0xFF6750A4),
+  primary: Color(0xffffeb3b),
   onPrimary: Color(0xFFFFFFFF),
   primaryContainer: Color(0xFFEADDFF),
   onPrimaryContainer: Color(0xFF21005D),
-  secondary: Color(0xFF625B71),
+  secondary: Color(0xFF304ffe),
   onSecondary: Color(0xFFFFFFFF),
   secondaryContainer: Color(0xFFE8DEF8),
-  onSecondaryContainer: Color(0xFF1D192B),
+  onSecondaryContainer: Color(0xFF7a7cff),
   tertiary: Color(0xFF7D5260),
   onTertiary: Color(0xFFFFFFFF),
   tertiaryContainer: Color(0xFFFFD8E4),
@@ -20,7 +20,7 @@ const lightColorScheme = ColorScheme(
   errorContainer: Color(0xFFF9DEDC),
   onError: Color(0xFFFFFFFF),
   onErrorContainer: Color(0xFF410E0B),
-  background: Color(0xFFFFFBFE),
+  background: Color(0xFFffff72),
   onBackground: Color(0xFF1C1B1F),
   surface: Color(0xFFFFFBFE),
   onSurface: Color(0xFF1C1B1F),
@@ -30,7 +30,7 @@ const lightColorScheme = ColorScheme(
   onInverseSurface: Color(0xFFF4EFF4),
   inverseSurface: Color(0xFF313033),
   inversePrimary: Color(0xFFD0BCFF),
-  shadow: Color(0xFF000000),
+  shadow: Color(0xff151515),
 );
 
 const darkColorScheme = ColorScheme(
@@ -61,5 +61,5 @@ const darkColorScheme = ColorScheme(
   onInverseSurface: Color(0xFF1C1B1F),
   inverseSurface: Color(0xFFE6E1E5),
   inversePrimary: Color(0xFF6750A4),
-  shadow: Color(0xFF000000),
+  shadow: Color(0xff151515),
 );

@@ -31,8 +31,13 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        title: const Text("Chat App"),
+        title: Text(
+          "Chat App",
+          style: TextStyle(
+              color: Theme.of(context).colorScheme.onPrimaryContainer),
+        ),
         actions: [
           DropdownButtonHideUnderline(
             child: DropdownButton(
@@ -60,7 +65,7 @@ class _ChatScreenState extends State<ChatScreen> {
               },
               icon: Icon(
                 Icons.more_vert,
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
               ),
             ),
           )
@@ -100,8 +105,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             ),
                           ),
                           filled: true,
-                          fillColor:
-                              Theme.of(context).colorScheme.onTertiaryContainer,
+                          fillColor: Theme.of(context).colorScheme.shadow,
                           hintStyle: const TextStyle(color: Colors.grey)),
                     ),
                   ),
