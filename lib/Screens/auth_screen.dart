@@ -36,7 +36,6 @@ class _AuthScreenState extends State<AuthScreen> {
                   duration: const Duration(milliseconds: 1000),
                 ),
               ),
-              const SizedBox(height: 8),
               // Add from here
               Expanded(
                 child: Consumer<ApplicationState>(
