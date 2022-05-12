@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../Providers/authentication.dart';
 import '../Providers/applicationState.dart';
+import '../Widgets/user_image_picker.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({Key? key}) : super(key: key);
@@ -18,16 +19,14 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     var darkThemeProvider = Provider.of<DarkThemeProvider>(context);
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              ClipPath(
-                clipper: LoginImageClipper(),
-                child: AnimatedCrossFade(
+    return SafeArea(
+      child: Scaffold(
+        body: ListView(
+          children: <Widget>[
+            ClipPath(
+              clipper: LoginImageClipper(),
+              child: Stack(children: [
+                AnimatedCrossFade(
                   firstChild: Image.asset('assets/nightLoginBackGround.png'),
                   secondChild: Image.asset('assets/dayLoginBackGround.jpg'),
                   crossFadeState: !darkThemeProvider.darkTheme
@@ -35,40 +34,49 @@ class _AuthScreenState extends State<AuthScreen> {
                       : CrossFadeState.showFirst,
                   duration: const Duration(milliseconds: 1000),
                 ),
-              ),
-              // Add from here
-              Expanded(
-                child: Consumer<ApplicationState>(
-                  builder: (context, appState, _) => Authentication(
-                    email: appState.email,
-                    loginState: appState.loginState,
-                    startLoginFlow: appState.startLoginFlow,
-                    verifyEmail: appState.verifyEmail,
-                    signInWithEmailAndPassword:
-                        appState.signInWithEmailAndPassword,
-                    cancelRegistration: appState.cancelRegistration,
-                    registerAccount: appState.registerAccount,
-                    signOut: appState.signOut,
-                    user: appState.user,
-                  ),
+                Positioned(
+                    top: 40,
+                    left: (MediaQuery.of(context).size.width / 2) - 55,
+                    child: Provider.of<ApplicationState>(context).loginState ==
+                            ApplicationLoginState.register
+                        ? UserImagePicker(Provider.of<ApplicationState>(context,
+                                listen: false)
+                            .setUserImage)
+                        : Container()),
+              ]),
+            ),
+            // Add from here
+            Expanded(
+              child: Consumer<ApplicationState>(
+                builder: (context, appState, _) => Authentication(
+                  email: appState.email,
+                  loginState: appState.loginState,
+                  startLoginFlow: appState.startLoginFlow,
+                  verifyEmail: appState.verifyEmail,
+                  signInWithEmailAndPassword:
+                      appState.signInWithEmailAndPassword,
+                  cancelRegistration: appState.cancelRegistration,
+                  registerAccount: appState.registerAccount,
+                  signOut: appState.signOut,
+                  user: appState.user,
                 ),
               ),
-              // to here
-              IconButton(
-                icon: const Icon(Icons.light_mode),
-                onPressed: () async {
-                  await darkThemeProvider.darkThemePreference.getThemeMode() !=
-                          true
-                      ? setState(() {
-                          darkThemeProvider.darkTheme = true;
-                        })
-                      : setState(() {
-                          darkThemeProvider.darkTheme = false;
-                        });
-                },
-              ),
-            ],
-          ),
+            ),
+            // to here
+            IconButton(
+              icon: const Icon(Icons.light_mode),
+              onPressed: () async {
+                await darkThemeProvider.darkThemePreference.getThemeMode() !=
+                        true
+                    ? setState(() {
+                        darkThemeProvider.darkTheme = true;
+                      })
+                    : setState(() {
+                        darkThemeProvider.darkTheme = false;
+                      });
+              },
+            ),
+          ],
         ),
       ),
     );

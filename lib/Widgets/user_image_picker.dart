@@ -6,10 +6,11 @@ import 'package:path_provider/path_provider.dart' as syspath;
 import 'package:path/path.dart' as path;
 
 class UserImagePicker extends StatefulWidget {
-  const UserImagePicker({
+  const UserImagePicker(
+    this.imagePickFn, {
     Key? key,
   }) : super(key: key);
-
+  final void Function(File pickedImage) imagePickFn;
   @override
   State<UserImagePicker> createState() => _UserImagePickerState();
 }
@@ -19,13 +20,17 @@ class _UserImagePickerState extends State<UserImagePicker> {
   File? _storedImage;
   Future<void> _imagePicker() async {
     final picker = ImagePicker();
-    _imageFile = await picker.pickImage(source: ImageSource.camera);
+    _imageFile = await picker.pickImage(
+        source: ImageSource.camera, imageQuality: 50, maxWidth: 150);
     if (_imageFile == null) {
       return;
     }
     setState(() {
       _storedImage = File(_imageFile!.path);
     });
+
+    widget.imagePickFn(_storedImage!);
+
     final appDir = await syspath.getApplicationDocumentsDirectory();
     final fileName = path.basename(_imageFile!.path);
     final savedImage =

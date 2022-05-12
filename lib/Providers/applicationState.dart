@@ -1,12 +1,14 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../firebase_options.dart';
 import './authentication.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
 
 class ApplicationState extends ChangeNotifier {
   ApplicationState() {
@@ -37,6 +39,7 @@ class ApplicationState extends ChangeNotifier {
 
   String? _email;
   String? get email => _email;
+  File? _userProfileImage;
 
   User? _userCredential;
   User? get user => _userCredential;
@@ -76,8 +79,12 @@ class ApplicationState extends ChangeNotifier {
         email: email,
         password: password,
       );
-      // final prefs = await SharedPreferences.getInstance();
-      // prefs.setString('userData', json.encode(userAuthData));
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child('user_images')
+          .child('${userAuthData.user!.uid}.png');
+      final userImageUrl = await ref.getDownloadURL();
+      // final userImage = await http.get(Uri.https(userImageUrl));
     } on FirebaseAuthException catch (e) {
       errorCallback(e);
     }
@@ -95,27 +102,43 @@ class ApplicationState extends ChangeNotifier {
       String username,
       void Function(FirebaseAuthException e) errorCallback) async {
     try {
-      var credential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: email, password: password);
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(credential.user!.uid)
-          .set({
-        'username': username,
-        'email': email,
-        'userId': FirebaseAuth.instance.currentUser!.uid
-      });
-      await credential.user!.updateDisplayName(displayName);
+      if (_userProfileImage != null) {
+        var credential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(email: email, password: password);
+        //Image upload
+        final ref = FirebaseStorage.instance
+            .ref()
+            .child('user_images')
+            .child('${credential.user!.uid}.jpg');
+
+        await ref.putFile(_userProfileImage!);
+
+        final userImageUrl = await ref.getDownloadURL();
+        //------------
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(credential.user!.uid)
+            .set({
+          'username': username,
+          'email': email,
+          'userId': FirebaseAuth.instance.currentUser!.uid,
+          'userImageUrl': userImageUrl
+        });
+        await credential.user!.updateDisplayName(displayName);
+      } else {
+        throw Exception("No user profile found");
+      }
     } on FirebaseAuthException catch (e) {
       errorCallback(e);
     }
   }
 
   void signOut() {
+    _userProfileImage = null;
     FirebaseAuth.instance.signOut();
   }
 
-  // Future<bool> tryAutoLog() async{
-
-  // }
+  void setUserImage(File userImage) {
+    _userProfileImage = userImage;
+  }
 }

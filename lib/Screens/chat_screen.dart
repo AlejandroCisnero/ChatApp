@@ -1,10 +1,12 @@
 import 'dart:developer';
 import 'dart:math' as math;
 
+import 'package:chat_app/Providers/applicationState.dart';
 import 'package:chat_app/Widgets/chat/chat.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -59,7 +61,8 @@ class _ChatScreenState extends State<ChatScreen> {
               onChanged: (dynamic value) {
                 switch (value) {
                   case 0:
-                    FirebaseAuth.instance.signOut();
+                    Provider.of<ApplicationState>(context, listen: false)
+                        .signOut();
                     break;
                 }
               },
