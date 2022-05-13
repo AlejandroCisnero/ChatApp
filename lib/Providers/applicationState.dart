@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:path_provider/path_provider.dart';
 import '../firebase_options.dart';
 import './authentication.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -40,9 +42,11 @@ class ApplicationState extends ChangeNotifier {
   String? _email;
   String? get email => _email;
   File? _userProfileImage;
+  String? _userImageUrl;
 
   User? _userCredential;
   User? get user => _userCredential;
+  String? get userImageUrl => _userImageUrl;
 
   void startLoginFlow() {
     _loginState = ApplicationLoginState.emailAddress;
@@ -82,9 +86,10 @@ class ApplicationState extends ChangeNotifier {
       final ref = FirebaseStorage.instance
           .ref()
           .child('user_images')
-          .child('${userAuthData.user!.uid}.png');
-      final userImageUrl = await ref.getDownloadURL();
-      // final userImage = await http.get(Uri.https(userImageUrl));
+          .child('${userAuthData.user!.uid}.jpg');
+      _userImageUrl = await ref.getDownloadURL();
+      log(_userImageUrl!);
+      notifyListeners();
     } on FirebaseAuthException catch (e) {
       errorCallback(e);
     }

@@ -1,12 +1,16 @@
+import 'package:chat_app/Providers/applicationState.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MessageBubble extends StatelessWidget {
-  const MessageBubble(this.message, this.isMe, this.userId, {Key? key})
+  const MessageBubble(this.message, this.isMe, this.userId, this.userImage,
+      {Key? key})
       : super(key: key);
   final bool isMe;
   final String message;
   final String userId;
+  final String userImage;
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +37,17 @@ class MessageBubble extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                message,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onBackground,
-                    fontSize: 19),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    message,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onBackground,
+                        fontSize: 19),
+                  ),
+                  //Place image here
+                ],
               ),
               FutureBuilder(
                 future: FirebaseFirestore.instance

@@ -1,7 +1,9 @@
+import 'package:chat_app/Providers/applicationState.dart';
 import 'package:chat_app/Widgets/chat/message_bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Chat extends StatelessWidget {
   const Chat({Key? key}) : super(key: key);
@@ -30,6 +32,7 @@ class Chat extends StatelessWidget {
                       chatDocs[index]['userId'] ==
                           FirebaseAuth.instance.currentUser!.uid,
                       chatDocs[index]['userId'],
+                      Provider.of<ApplicationState>(context).userImageUrl!,
                       key: ValueKey(chatDocs[index].id),
                     );
                   });

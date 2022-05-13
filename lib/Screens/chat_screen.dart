@@ -25,7 +25,7 @@ class _ChatScreenState extends State<ChatScreen> {
     await FirebaseFirestore.instance.collection('chat').add({
       'text': messageController.text.trim(),
       'createdAt': Timestamp.now(),
-      'userId': FirebaseAuth.instance.currentUser!.uid
+      'userId': FirebaseAuth.instance.currentUser!.uid,
     });
     messageController.text = '';
   }
