@@ -24,10 +24,15 @@ class ApplicationState extends ChangeNotifier {
       );
     }
 
-    FirebaseAuth.instance.userChanges().listen((user) {
+    FirebaseAuth.instance.userChanges().listen((user) async {
       if (user != null) {
         _loginState = ApplicationLoginState.loggedIn;
         _userCredential = user;
+        final ref = FirebaseStorage.instance
+            .ref()
+            .child('user_images')
+            .child('${_userCredential!.uid}.jpg');
+        _userImageUrl = await ref.getDownloadURL();
       } else {
         _loginState = ApplicationLoginState.loggedOut;
         _userCredential = null;
@@ -116,7 +121,8 @@ class ApplicationState extends ChangeNotifier {
             .child('user_images')
             .child('${credential.user!.uid}.jpg');
 
-        await ref.putFile(_userProfileImage!);
+        await ref.putFile(
+            _userProfileImage!); //Esto sube el archivo a Firebase storage
 
         _userImageUrl = await ref.getDownloadURL();
         //------------
