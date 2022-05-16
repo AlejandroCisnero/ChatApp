@@ -4,13 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class MessageBubble extends StatelessWidget {
-  const MessageBubble(this.message, this.isMe, this.userId, this.userImage,
-      {Key? key})
+  const MessageBubble(this.message, this.isMe, this.userId, {Key? key})
       : super(key: key);
   final bool isMe;
   final String message;
   final String userId;
-  final String userImage;
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +64,10 @@ class MessageBubble extends StatelessWidget {
                         snapshot.data['username'],
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
+                      CircleAvatar(
+                          backgroundImage: NetworkImage(
+                              Provider.of<ApplicationState>(context)
+                                  .userImageUrl!))
                     ],
                   );
                 },

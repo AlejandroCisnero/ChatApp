@@ -118,7 +118,7 @@ class ApplicationState extends ChangeNotifier {
 
         await ref.putFile(_userProfileImage!);
 
-        final userImageUrl = await ref.getDownloadURL();
+        _userImageUrl = await ref.getDownloadURL();
         //------------
         await FirebaseFirestore.instance
             .collection('users')
