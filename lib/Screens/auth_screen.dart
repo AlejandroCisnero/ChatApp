@@ -21,31 +21,8 @@ class _AuthScreenState extends State<AuthScreen> {
     var darkThemeProvider = Provider.of<DarkThemeProvider>(context);
     return SafeArea(
       child: Scaffold(
-        body: ListView(
+        body: Column(
           children: <Widget>[
-            ClipPath(
-              clipper: LoginImageClipper(),
-              child: Stack(children: [
-                AnimatedCrossFade(
-                  firstChild: Image.asset('assets/nightLoginBackGround.png'),
-                  secondChild: Image.asset('assets/dayLoginBackGround.jpg'),
-                  crossFadeState: !darkThemeProvider.darkTheme
-                      ? CrossFadeState.showSecond
-                      : CrossFadeState.showFirst,
-                  duration: const Duration(milliseconds: 1000),
-                ),
-                Positioned(
-                    top: 40,
-                    left: (MediaQuery.of(context).size.width / 2) - 55,
-                    child: Provider.of<ApplicationState>(context).loginState ==
-                            ApplicationLoginState.register
-                        ? UserImagePicker(Provider.of<ApplicationState>(context,
-                                listen: false)
-                            .setUserImage)
-                        : Container()),
-              ]),
-            ),
-            // Add from here
             Expanded(
               child: Consumer<ApplicationState>(
                 builder: (context, appState, _) => Authentication(
@@ -63,18 +40,20 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
             ),
             // to here
-            IconButton(
-              icon: const Icon(Icons.light_mode),
-              onPressed: () async {
-                await darkThemeProvider.darkThemePreference.getThemeMode() !=
-                        true
-                    ? setState(() {
-                        darkThemeProvider.darkTheme = true;
-                      })
-                    : setState(() {
-                        darkThemeProvider.darkTheme = false;
-                      });
-              },
+            Center(
+              child: IconButton(
+                icon: const Icon(Icons.light_mode),
+                onPressed: () async {
+                  await darkThemeProvider.darkThemePreference.getThemeMode() !=
+                          true
+                      ? setState(() {
+                          darkThemeProvider.darkTheme = true;
+                        })
+                      : setState(() {
+                          darkThemeProvider.darkTheme = false;
+                        });
+                },
+              ),
             ),
           ],
         ),
